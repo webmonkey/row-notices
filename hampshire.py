@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 
 organisation = "Hampshire County Council"
-telegram_config = "hcc-byways-channel.conf"
+telegram_config = "conf/hcc-byways-channel.conf"
 
 class fetcher:
 

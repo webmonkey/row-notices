@@ -60,4 +60,4 @@ class fetcher:
             if element.name == "hr":
                 break
 
-        return "\n\n".join(text_fields).encode('utf-8')
+        return str("\n\n".join(text_fields).encode('utf-8'))
