@@ -48,3 +48,17 @@ def rowsToDict(rows):
         out[row[0]] = row[1]
 
     return out
+
+
+def telegramMessageFormatter(changeDescription, orgName, info):
+
+    lines = []
+    lines.append("*" + changeDescription + " by " + orgName + "*")
+    lines.append("")
+    lines.append("*" + info['title'] + "*")
+    lines.append(info['text'])
+    lines.append("")
+    lines.append(info['url'])
+
+    return "\n".join(lines)
+
