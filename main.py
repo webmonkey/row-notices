@@ -18,7 +18,7 @@ for m in modules:
 
     print("module: ", module.__name__)
 
-    notices = fetcher.getByways()
+    notices = fetcher.getNotices()
     print(str(len(notices)) +" current notices found")
 
     currentIds = []

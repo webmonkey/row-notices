@@ -10,11 +10,11 @@ class fetcher:
     url = 'https://www.hants.gov.uk/community/publicnotices?keywords=BOAT'
 
     # common method for all similar classes
-    def getByways(self):
-        return self.getBywayPage(self.url)
+    def getNotices(self):
+        return self.getNoticePage(self.url)
 
     # class specific method that takes URL as a parameter
-    def getBywayPage(self,url):
+    def getNoticePage(self,url):
 
         html_text = requests.get(url).text
         soup = BeautifulSoup(html_text, 'html.parser')
@@ -40,21 +40,8 @@ class fetcher:
         nextPage = soup.find("a", class_="paginate_button", title="Next")
 
         if nextPage:
-            moreByways = self.getBywayPage(nextPage['href'])
+            moreByways = self.getNoticePage(nextPage['href'])
             byways = {**byways, **moreByways}
 
         return byways
-
-
-
-
-
-
-
-
-
-
-
-
-
 

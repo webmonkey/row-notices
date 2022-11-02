@@ -10,7 +10,7 @@ class fetcher:
 
     url = "https://www.surreycc.gov.uk/culture-and-leisure/countryside/management/footpaths-byways-and-bridleways/rights-of-way-public-notices"
 
-    def getByways(self):
+    def getNotices(self):
 
         html_text = requests.get(self.url).text
         soup = BeautifulSoup(html_text, 'html.parser')
