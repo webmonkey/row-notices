@@ -21,12 +21,6 @@ for m in modules:
     notices = fetcher.getNotices()
     print(str(len(notices)) +" current notices found")
 
-    currentIds = []
-    for id in notices:
-        currentIds.append(id)
-
-    print("currentIds=", currentIds)
-
     r = sqliteCursor.execute("SELECT id, content_hash FROM state_tracker WHERE module=?", [module.__name__])
     lastState = noticeHelpers.rowsToDict(r.fetchall())
 
