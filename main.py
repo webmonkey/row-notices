@@ -28,21 +28,22 @@ for m in modules:
     removedIds = noticeHelpers.getRemovedNotices(lastState, notices)
     changedIds = noticeHelpers.getChangedNotices(lastState, notices)
 
-    telegramMessages = []
-
     for id in newIds:
         sqliteCursor.execute("INSERT INTO state_tracker (module,id,content_hash) VALUES(?,?,?)", [module.__name__, id, noticeHelpers.getNoticeHash(notices[id])])
-        telegramMessages.append( noticeHelpers.telegramMessageFormatter('New notice added', module.organisation, notices[id]) )
+        telegram_send.send(
+                messages=[ noticeHelpers.telegramMessageFormatter('New notice added', module.organisation, notices[id]) ],
+                files=noticeHelpers.fileFetcher(notices[id]["attachments"]),
+                conf=module.telegramConfig, parse_mode="markdown")
 
     for id in removedIds:
         sqliteCursor.execute("DELETE FROM state_tracker WHERE module=? AND id=?", [module.__name__, id])
 
     for id in changedIds:
         sqliteCursor.execute("UPDATE state_tracker SET content_hash=? WHERE module=? AND id=?", [noticeHelpers.getNoticeHash(notices[id]), module.__name__, id])
-        telegramMessages.append( noticeHelpers.telegramMessageFormatter('Changed notice', module.organisation, notices[id]) )
-
-    if len(telegramMessages) > 0:
-        telegram_send.send(messages=telegramMessages, conf=module.telegramConfig, parse_mode="markdown")
+        telegram_send.send(
+                messages=[ noticeHelpers.telegramMessageFormatter('Changed notice', module.organisation, notices[id]) ],
+                files=noticeHelpers.fileFetcher(notices[id]["attachments"]),
+                conf=module.telegramConfig, parse_mode="markdown")
 
     sqliteConnection.commit()
 
