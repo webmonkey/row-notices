@@ -4,7 +4,7 @@ import requests
 import hashlib
 
 organisation = "Surrey County Council"
-telegram_config = "missing"
+telegramConfig = "conf/telegram/surreytrf-group.conf"
 
 class fetcher:
 
@@ -32,32 +32,36 @@ class fetcher:
 
                 if is_byway:
 
+                    article_url = li.a['href']
+
                     info = {}
-                    info['url'] = li.a['href']
+                    info['url'] = article_url
                     info['title'] = li.a.string
-                    info['text'] = self.getBywayText(li.a['href'])
+
+                    # get extra details from the article page
+                    article_html_text = requests.get(article_url).text
+                    article_soup = BeautifulSoup(article_html_text, 'html.parser')
+
+                    # build the text blob
+                    text_fields = []
+                    for element in article_soup.article.contents:
+
+                        if element.name in ["h2", "h3", "p"]:
+                            if element.string:
+                                text_fields.append(element.string)
+
+                        if element.name == "hr":
+                            break
+
+                    info['text'] = str("\n\n".join(text_fields))
+
+                    # any PDF attachments
+                    info['attachments'] = []
+                    for pdf_li in article_soup.find_all("li", class_="resources__item--pdf"):
+                        info['attachments'].append(pdf_li.a['href'])
 
                     id = hashlib.md5(info['url'].encode('utf-8')).hexdigest()
 
                     byways[id] = info
 
         return byways
-
-
-    def getBywayText(self, url):
-
-        html_text = requests.get(url).text
-        soup = BeautifulSoup(html_text, 'html.parser')
-
-        text_fields = []
-
-        for element in soup.article.contents:
-
-            if element.name in ["h2", "h3", "p"]:
-                if element.string:
-                    text_fields.append(element.string)
-
-            if element.name == "hr":
-                break
-
-        return str("\n\n".join(text_fields).encode('utf-8'))

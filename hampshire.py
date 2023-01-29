@@ -30,10 +30,13 @@ class fetcher:
             info["url"] = urljoin(url, h2.a['href'])
             info["title"] = h2.a.string
             info["text"] = h2.a.string.next_element.strip()
+            info["attachments"] = []
 
             noticeId = info["url"].split("=")[1]
 
             byways[noticeId] = info
+
+            # FIXME fetch attachments
 
 
         # look to see if there are more pages of data
