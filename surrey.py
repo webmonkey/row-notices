@@ -1,10 +1,13 @@
 from bs4 import BeautifulSoup
-import json
-import requests
 import hashlib
+import json
+import os
+import requests
+import urllib
 
 organisation = "Surrey County Council"
-telegramConfig = "conf/telegram/surreytrf-group.conf"
+telegramConfig = "conf/surreytrf-group.conf"
+#telegramConfig = "conf/telegram/test.conf"
 
 class fetcher:
 
@@ -56,9 +59,12 @@ class fetcher:
                     info['text'] = str("\n\n".join(text_fields))
 
                     # any PDF attachments
-                    info['attachments'] = []
+                    info['attachments'] = {} 
                     for pdf_li in article_soup.find_all("li", class_="resources__item--pdf"):
-                        info['attachments'].append(pdf_li.a['href'])
+                        pdf_url = pdf_li.a['href']
+                        pdf_file_name = os.path.basename(urllib.parse.urlparse(pdf_url).path)
+
+                        info['attachments'][pdf_file_name] = pdf_url
 
                     id = hashlib.md5(info['url'].encode('utf-8')).hexdigest()
 

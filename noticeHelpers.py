@@ -1,6 +1,7 @@
 import hashlib
 import urllib
 import os
+import json
 
 def getNewNotices(last,current):
 
@@ -33,18 +34,8 @@ def getChangedNotices(last,current):
 
 
 def getNoticeHash(notice):
-
-    strings = []
-
-    for key in notice:
-        strings.append(key)
-        if isinstance(notice[key], str):
-            strings.append(notice[key])
-        elif isinstance(notice[key], list):
-            for item in notice[key]:
-                strings.append(item)
-
-    return hashlib.md5(" ".join(strings).encode('utf-8')).hexdigest()
+    json_blob = json.dumps(notice).encode('utf-8')
+    return hashlib.md5(json_blob).hexdigest()
 
 
 def rowsToDict(rows):
@@ -69,12 +60,11 @@ def telegramMessageFormatter(changeDescription, orgName, info):
     return "\n".join(lines)
 
 
-def fileFetcher(urls):
+def fileFetcher(attachments):
     responses = []
 
-    for url in urls:
-        parsed = urllib.parse.urlparse(url)
-        file_name = os.path.basename(parsed.path)
+    for file_name in attachments:
+        url = attachments[file_name]
         tmp_file = "/tmp/" + file_name
 
         urllib.request.urlretrieve(url, tmp_file)
