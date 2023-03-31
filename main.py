@@ -18,7 +18,12 @@ for m in modules:
 
     print("module: ", module.__name__)
 
-    notices = fetcher.getNotices()
+    try:
+        notices = fetcher.getNotices()
+    except Exception as err:
+        print("error fetching notices" + err)
+        continue
+
     print(str(len(notices)) +" current notices found")
 
     r = sqliteCursor.execute("SELECT id, content_hash FROM state_tracker WHERE module=?", [module.__name__])

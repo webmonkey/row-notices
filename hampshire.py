@@ -17,8 +17,15 @@ class fetcher:
     # class specific method that takes URL as a parameter
     def getNoticePage(self,url):
 
-        html_text = requests.get(url).text
-        soup = BeautifulSoup(html_text, 'html.parser')
+        response = requests.get(url)
+
+        if response.status_code != 200:
+            raise Exception("Status code is not 200")
+
+        if "Use this page to search through all current public notices" not in response.text:
+            raise Exception("Page content looks incorrect")
+
+        soup = BeautifulSoup(response.text, 'html.parser')
 
         byways = {}
 

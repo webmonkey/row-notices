@@ -6,7 +6,7 @@ import requests
 import urllib
 
 organisation = "Surrey County Council"
-telegramConfig = "conf/surreytrf-group.conf"
+telegramConfig = "conf/telegram/surreytrf-group.conf"
 #telegramConfig = "conf/telegram/test.conf"
 
 class fetcher:
@@ -15,8 +15,15 @@ class fetcher:
 
     def getNotices(self):
 
-        html_text = requests.get(self.url).text
-        soup = BeautifulSoup(html_text, 'html.parser')
+        response = requests.get(self.url)
+
+        if response.status_code != 200:
+            raise Exception("Status code is not 200")
+
+        if "selecting your borough/district below" not in response.text:
+            raise Exception("Page content looks incorrect")
+
+        soup = BeautifulSoup(response.text, 'html.parser')
 
         byways = {}
 
